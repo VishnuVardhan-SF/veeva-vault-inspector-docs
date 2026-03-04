@@ -1,411 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - Veeva Vault Inspector</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+{
+    "manifest_version": 3,
+    "name": "Veeva Vault Inspector",
+    "version": "1.1.0",
+    "description": "Developer tools for Veeva Vault administrators and developers",
+    "permissions": [
+        "storage",
+        "cookies"
+    ],
+    "host_permissions": [
+        "https://*.veevavault.com/*",
+        "https://*.veevavault.cn/*",
+        "https://*.vaultdev.com/*",
+        "https://*.vaultpvm.com/*"
+    ],
+    "action": {
+        "default_popup": "src/popup/popup.html",
+        "default_icon": {
+            "16": "assets/icons/VM_icon_updated.png",
+            "48": "assets/icons/VM_icon_updated.png",
+            "128": "assets/icons/VM_icon_updated.png"
         }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.7;
-            color: #1f2937;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
-            min-height: 100vh;
+    },
+    "background": {
+        "service_worker": "src/background/service-worker.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://*.veevavault.com/*",
+                "https://*.vaultdev.com/*",
+                "https://*.veevavault.cn/*",
+                "https://*.vaultpvm.com/*"
+            ],
+            "js": [
+                "src/content/content.js"
+            ]
         }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 24px;
+    ],
+    "icons": {
+        "16": "assets/icons/VM_icon_updated.png",
+        "48": "assets/icons/VM_icon_updated.png",
+        "128": "assets/icons/VM_icon_updated.png"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "lib/monaco/vs/assets/*.js",
+                "lib/monaco/vs/*.js",
+                "lib/monaco/vs/basic-languages/*/*.js",
+                "lib/monaco/vs/language/*/*.js",
+                "lib/monaco/vs/editor/*.js",
+                "lib/monaco/vs/editor/*.css",
+                "src/popup/popup.html",
+                "src/popup/popup.js",
+                "src/styles/main.css",
+                "assets/icons/*.png",
+                "assets/icons/*.svg",
+                "assets/fonts/*.woff2",
+                "assets/fonts/*.woff"
+            ],
+            "matches": [
+                "https://*.veevavault.com/*",
+                "https://*.veevavault.cn/*",
+                "https://*.vaultdev.com/*",
+                "https://*.vaultpvm.com/*"
+            ]
         }
-
-        .card {
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-            padding: 48px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 32px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .logo {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-        }
-
-        .logo svg {
-            width: 32px;
-            height: 32px;
-            color: white;
-        }
-
-        h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .last-updated {
-            display: inline-block;
-            background: #f3f4f6;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: 16px;
-        }
-
-        h2 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #111827;
-            margin: 32px 0 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        h2 .icon {
-            width: 28px;
-            height: 28px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-
-        h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #374151;
-            margin: 24px 0 12px;
-        }
-
-        p {
-            color: #4b5563;
-            margin-bottom: 16px;
-        }
-
-        .highlight-box {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border-left: 4px solid #22c55e;
-            padding: 16px 20px;
-            border-radius: 0 12px 12px 0;
-            margin: 20px 0;
-        }
-
-        .highlight-box.warning {
-            background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
-            border-left-color: #eab308;
-        }
-
-        .highlight-box p {
-            margin: 0;
-            color: #166534;
-            font-weight: 500;
-        }
-
-        .highlight-box.warning p {
-            color: #854d0e;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-            font-size: 14px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: 600;
-            text-align: left;
-            padding: 14px 16px;
-        }
-
-        td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #f0f0f0;
-            color: #4b5563;
-        }
-
-        tr:nth-child(even) {
-            background: #f9fafb;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        ul {
-            margin: 16px 0;
-            padding-left: 0;
-            list-style: none;
-        }
-
-        li {
-            position: relative;
-            padding: 8px 0 8px 28px;
-            color: #4b5563;
-        }
-
-        li::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 14px;
-            width: 8px;
-            height: 8px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-        }
-
-        .not-list li::before {
-            background: #22c55e;
-        }
-
-        .contact-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 12px;
-            padding: 24px;
-            margin-top: 24px;
-            text-align: center;
-        }
-
-        .contact-card h3 {
-            margin-top: 0;
-        }
-
-        .contact-links {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 16px;
-        }
-
-        .contact-links a {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 14px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .contact-links a:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 32px;
-            border-top: 2px solid #f0f0f0;
-            color: #9ca3af;
-            font-size: 13px;
-        }
-
-        .footer p {
-            color: #9ca3af;
-        }
-
-        @media (max-width: 640px) {
-            .card {
-                padding: 32px 24px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            table {
-                font-size: 13px;
-            }
-
-            th, td {
-                padding: 10px 12px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="card">
-            <div class="header">
-                <div class="logo">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>
-                </div>
-                <h1>Privacy Policy</h1>
-                <p class="subtitle">Veeva Vault Inspector - Chrome Extension</p>
-                <span class="last-updated">Last Updated: December 2024</span>
-            </div>
-
-            <h2><span class="icon">1</span> Overview</h2>
-            <p>Veeva Vault Inspector is a browser extension designed to help Veeva Vault administrators and developers with data export and import operations. This privacy policy explains how we handle your data.</p>
-
-            <div class="highlight-box">
-                <p>Your data stays on YOUR device. We do not collect, transmit, or store any of your information on external servers.</p>
-            </div>
-
-            <h2><span class="icon">2</span> Data Collection & Storage</h2>
-            <h3>What We Store Locally</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Data Type</th>
-                        <th>Purpose</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Vault credentials</td>
-                        <td>Auto-login to saved vaults</td>
-                    </tr>
-                    <tr>
-                        <td>Connection details (DNS, vault name)</td>
-                        <td>Quick access to your vaults</td>
-                    </tr>
-                    <tr>
-                        <td>Query history</td>
-                        <td>Access to recent queries</td>
-                    </tr>
-                    <tr>
-                        <td>Saved queries</td>
-                        <td>Reuse frequently used queries</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>What We DO NOT Do</h3>
-            <ul class="not-list">
-                <li>Send your data to any external servers</li>
-                <li>Collect analytics or usage data</li>
-                <li>Share your data with third parties</li>
-                <li>Store data outside your browser</li>
-            </ul>
-
-            <h2><span class="icon">3</span> Data Security</h2>
-            <ul>
-                <li>All data is stored locally using Chrome's storage API</li>
-                <li>Passwords are encrypted before storage</li>
-                <li>Data only leaves your device when communicating with your Veeva Vault instance</li>
-            </ul>
-
-            <h2><span class="icon">4</span> Permissions Used</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Permission</th>
-                        <th>Why We Need It</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>storage</code></td>
-                        <td>Save your vault credentials and preferences locally</td>
-                    </tr>
-                    <tr>
-                        <td><code>activeTab</code></td>
-                        <td>Interact with the current Veeva Vault tab</td>
-                    </tr>
-                    <tr>
-                        <td><code>tabs</code></td>
-                        <td>Open the inspector in a new tab</td>
-                    </tr>
-                    <tr>
-                        <td><code>Host permissions</code></td>
-                        <td>Communicate with Veeva Vault APIs</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h2><span class="icon">5</span> Data Retention</h2>
-            <ul>
-                <li>All data remains on your device until you manually delete it</li>
-                <li>Uninstalling the extension removes all stored data</li>
-                <li>You can clear all saved data at any time</li>
-            </ul>
-
-            <h2><span class="icon">6</span> Third-Party Services</h2>
-            <p>This extension connects only to:</p>
-            <ul>
-                <li><strong>Veeva Vault APIs</strong> - Your vault instance for data operations</li>
-                <li><strong>Tally.so</strong> - Only when you voluntarily submit feedback</li>
-            </ul>
-
-            <h2><span class="icon">7</span> Your Rights</h2>
-            <ul>
-                <li>Access all data stored by the extension (via Chrome DevTools)</li>
-                <li>Delete all stored data at any time</li>
-                <li>Uninstall the extension to remove all data</li>
-            </ul>
-
-            <div class="highlight-box warning">
-                <p>This extension is designed for business use and is not intended for children under 13.</p>
-            </div>
-
-            <h2><span class="icon">8</span> Contact Us</h2>
-            <div class="contact-card">
-                <h3>Questions or Concerns?</h3>
-                <p>We're here to help!</p>
-                <div class="contact-links">
-                    <a href="https://villageminds.in/" target="_blank">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                        Visit Website
-                    </a>
-                    <a href="https://tally.so/r/MeNXGE" target="_blank">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                        Submit Feedback
-                    </a>
-                </div>
-            </div>
-
-            <div class="footer">
-                <p>By using Veeva Vault Inspector, you agree to this privacy policy.</p>
-                <p style="margin-top: 12px;">&copy; 2024 Villageminds. All rights reserved.</p>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+    ]
+}
